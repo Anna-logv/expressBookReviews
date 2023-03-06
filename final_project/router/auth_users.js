@@ -68,6 +68,19 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   return res.status(200).send("The review for the book with isbm "+isbn+" has been added");  
   //return res.status(300).json({message: "Yet to be implemented"});
 });
+// Add a book review
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+    //Write your code here
+    const isbn=req.params.isbn;
+
+    if (typeof(books[isbn])==='undefined') return res.status(404).json({message: "Book is not found"});
+    
+    const currUser=req.session.authorization['username'];
+    if (!books[isbn].reviews[currUser]) return res.status(404).json({message: "No reviews yet"});
+    delete books[isbn].reviews[currUser];
+
+    return res.status(200).send("The review for the book with isbm "+isbn+" posted by user "+currUser+" has been deleted");  
+  });
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
